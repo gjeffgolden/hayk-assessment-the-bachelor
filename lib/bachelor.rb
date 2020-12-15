@@ -1,22 +1,17 @@
 require 'pry'
 
-# def get_contestants(data)
-#   data.values.each do |contestants_array|
-#     contestants_array.map do |contestant_hash|
-#       contestant_hash
-#     end
-#   end
-#   return contestant_hash
-# end
-
-
+#HELPER METHOD
+def all_contestants data
+  data.values.flatten
+end
 
 
 def get_first_name_of_season_winner(data, season)
-  contestant = data[season].find {|contestants| contestants["status"] == "Winner"}
-  contestant["name"].split[0]
+  winning_contestant = data[season].find do |contestant| 
+    contestant["status"] == "Winner"
+  end
+    winning_contestant["name"].split[0]
 end
-
 #ORIGINAL CODE
 # def get_first_name_of_season_winner(data, season)
 #   first_name =[]
@@ -31,46 +26,45 @@ end
 # end
 
 
+def get_contestant_name data, occupation
+  all_contestants(data).find do | contestant |
+    occupation == contestant["occupation"]
+  end["name"]
+end
+# def get_contestant_name(data, occupation)
+#   data.each do |contestants|
+#     contestants[1].each do |contestant_info|
+#       if contestant_info["occupation"] == occupation
+#         return contestant_info["name"]
+#       end
+#     end
+#   end
+# end
 
 
-
-def get_contestant_name(data, occupation)
-  data.each do |contestants|
-    contestants[1].each do |contestant_info|
-      if contestant_info["occupation"] == occupation
-        return contestant_info["name"]
-      end
-    end
+def count_contestants_by_hometown data, hometown
+  all_contestants(data).count do |contestant|
+    hometown == contestant["hometown"]
   end
 end
-
-def count_contestants_by_hometown(data, hometown)
-  count = 0
-  data.each do |contestants|
-    contestants[1].each do |contestant_info|
-        if contestant_info["hometown"] == hometown
-        count += 1
-        end
-      end
-    end
-  count
-end
-
-
-
+# def count_contestants_by_hometown(data, hometown)
+#   count = 0
+#   data.each do |contestants|
+#     contestants[1].each do |contestant_info|
+#         if contestant_info["hometown"] == hometown
+#         count += 1
+#         end
+#       end
+#     end
+#   count
+# end
 
 
 def get_occupation(data, hometown)
-  data.each do |contestants|
-    contestants[1].find do |contestant_info| 
-      if contestant_info["hometown"] == hometown
-        return contestant_info["occupation"]
-      end
-    end
-  end
+  all_contestants(data).find do |contestants|
+    contestants["hometown"] == hometown
+  end["occupation"]
 end
-
-#ORIGINAL CODE
 # def get_occupation(data, hometown)
 #   data.each do |contestants|
 #     contestants[1].each do |contestant_info|
@@ -82,15 +76,10 @@ end
 # end
 
 
-
-
-
 def get_average_age_for_season(data, season)
   age_array = data[season].map {|contestants| contestants["age"].to_f}
   (age_array.sum / age_array.length).round
 end
-
-#ORIGINAL CODE
 # def get_average_age_for_season(data, season)
 #   age_array = []
 #   solution = 0
